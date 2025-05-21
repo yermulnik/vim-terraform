@@ -19,8 +19,13 @@ syn case match
 " strings or identifiers - and an opening curly brace.  Match the type.
 syn match hclBlockType /^\s*\zs\K\k*\ze\s\+\(\("\K\k*"\|\K\k*\)\s\+\)*{/
 
+""" skip \" and \\ in strings.
+syn region hclValueString   start=/"/ skip=/\\\\\|\\"/ end=/"/ contains=hclStringInterp
+syn region hclStringInterp  matchgroup=hclBraces start=/\(^\|[^$]\)\$\zs{/ end=/}/ contained contains=ALLBUT,hclAttributeName
+syn region hclHereDocText   start=/<<-\?\z([a-z0-9A-Z]\+\)/ end=/^\s*\z1/ contains=hclStringInterp
+
 " An attribute name is an identifier followed by an equals sign.
-syn match hclAttributeAssignment /\(\K\k*\.\)*\K\k*\s\+=\s/ contains=hclAttributeName
+syn match hclAttributeAssignment /\(\(\K\k*\.\)*\K\k*\|"\(\K\k*\.\)*\K\k*"\)\s\+=\s/ contains=hclAttributeName
 syn match hclAttributeName /\<\K\k*\>/ contained
 
 syn keyword hclValueBool true false
@@ -34,11 +39,6 @@ syn region  hclComment      start="//" end="$" contains=hclTodo,@Spell
 syn match hclValueDec      "\<[0-9]\+\([kKmMgG]b\?\)\?\>"
 syn match hclValueHexaDec  "\<0x[0-9a-f]\+\([kKmMgG]b\?\)\?\>"
 syn match hclBraces        "[\[\]]"
-
-""" skip \" and \\ in strings.
-syn region hclValueString   start=/"/ skip=/\\\\\|\\"/ end=/"/ contains=hclStringInterp
-syn region hclStringInterp  matchgroup=hclBraces start=/\(^\|[^$]\)\$\zs{/ end=/}/ contained contains=ALLBUT,hclAttributeName
-syn region hclHereDocText   start=/<<-\?\z([a-z0-9A-Z]\+\)/ end=/^\s*\z1/ contains=hclStringInterp
 
 "" Functions.
 syn match hclFunction "[a-z0-9_]\+(\@="
